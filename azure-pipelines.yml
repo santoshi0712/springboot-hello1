@@ -1,0 +1,25 @@
+pool:
+  vmImage: ubuntu-latest
+steps:
+- task: Docker@0
+  displayName: 'Build an image'
+  inputs:
+    azureSubscription: 'RBA_Migration_POC (757f5bd2-4fe5-47cf-a431-1cd3b0b375f2)'
+    azureContainerRegistry: '{"loginServer":"santuacrtrail.azurecr.io", "id" : "/subscriptions/757f5bd2-4fe5-47cf-a431-1cd3b0b375f2/resourceGroups/RBA-AKS-RG3/providers/Microsoft.ContainerRegistry/registries/santuacrtrail"}'
+    imageName: 'santuacrtrail.azurecr.io/santoshi0712/mypythondockerrepo:$(Build.BuildId)'
+    includeLatestTag: true
+- task: Docker@0
+  displayName: 'Push an image'
+  inputs:
+    azureSubscription: 'RBA_Migration_POC (757f5bd2-4fe5-47cf-a431-1cd3b0b375f2)'
+    azureContainerRegistry: '{"loginServer":"santuacrtrail.azurecr.io", "id" : "/subscriptions/757f5bd2-4fe5-47cf-a431-1cd3b0b375f2/resourceGroups/RBA-AKS-RG3/providers/Microsoft.ContainerRegistry/registries/santuacrtrail"}'
+    action: 'Push an image'
+    imageName: 'santuacrtrail.azurecr.io/santoshi0712/mypythondockerrepo:$(Build.BuildId)'
+    includeLatestTag: true
+- task: CopyFiles@2
+  displayName: 'Copy Files to:  $(build.artifactstagingdirectory)'
+  inputs:
+    Contents: 'azure-aks.yaml'
+    TargetFolder: ' $(build.artifactstagingdirectory)'
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: drop'
